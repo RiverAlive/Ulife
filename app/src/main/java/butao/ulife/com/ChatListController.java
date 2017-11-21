@@ -1,0 +1,141 @@
+package butao.ulife.com;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import butao.ulife.com.base.CApplication;
+import butao.ulife.com.jpush.ChatListView;
+import butao.ulife.com.jpush.adapter.ConversationListAdapter;
+import butao.ulife.com.jpush.chatting.ChatActivity;
+import butao.ulife.com.jpush.chatting.utils.DialogCreator;
+import butao.ulife.com.jpush.tools.SortConvList;
+import butao.ulife.com.mvp.fragment.ChatListFragment;
+import butao.ulife.com.util.JsonUtil;
+import cn.jpush.im.android.api.JMessageClient;
+import cn.jpush.im.android.api.enums.ConversationType;
+import cn.jpush.im.android.api.model.Conversation;
+import cn.jpush.im.android.api.model.GroupInfo;
+import cn.jpush.im.android.api.model.UserInfo;
+
+public class ChatListController implements
+        OnItemClickListener, OnItemLongClickListener {
+
+    private ChatListView mConvListView;
+    private ChatListFragment mContext;
+    private List<Conversation> mDatas = new ArrayList<Conversation>();
+    private ConversationListAdapter mListAdapter;
+    private int mWidth;
+    private Dialog mDialog;
+
+    public ChatListController(ChatListView listView, ChatListFragment context,
+                              int width) {
+        this.mConvListView = listView;
+        this.mContext = context;
+        this.mWidth = width;
+        initConvListAdapter();
+    }
+
+    // 得到会话列表
+    private void initConvListAdapter() {
+        mDatas = JMessageClient.getConversationList();
+        //对会话列表进行时间排序
+        if(!JsonUtil.isEmpty(mDatas)) {
+            if (mDatas.size() > 1) {
+                SortConvList sortList = new SortConvList();
+                Collections.sort(mDatas, sortList);
+            }
+
+            mListAdapter = new ConversationListAdapter(mContext.getActivity(), mDatas);
+            mConvListView.setConvListAdapter(mListAdapter);
+        }
+    }
+
+
+    // 点击会话列表
+    @Override
+    public void onItemClick(AdapterView<?> viewAdapter, View view, int position, long id) {
+        // TODO Auto-generated method stub
+        final Intent intent = new Intent();
+        try {
+            if (position > 0) {
+                // 减去 header view 个数
+                Conversation conv = mDatas.get(position - 2);
+                intent.putExtra(CApplication.CONV_TITLE, conv.getTitle());
+                if (null != conv) {
+                    // 当前点击的会话是否为群组
+                    if (conv.getType() == ConversationType.group) {
+                        if (mListAdapter.includeAtMsg(conv)) {
+                            intent.putExtra("atMsgId", mListAdapter.getAtMsgId(conv));
+                        }
+                        long groupId = ((GroupInfo) conv.getTargetInfo()).getGroupID();
+                        intent.putExtra(CApplication.GROUP_ID, groupId);
+                        intent.putExtra(CApplication.DRAFT, getAdapter().getDraft(conv.getId()));
+                        intent.setClass(mContext.getActivity(), ChatActivity.class);
+                        mContext.getActivity().startActivity(intent);
+                        return;
+                    } else {
+                        String targetId = ((UserInfo) conv.getTargetInfo()).getUserName();
+                        intent.putExtra(CApplication.TARGET_ID, targetId);
+                        intent.putExtra(CApplication.TARGET_APP_KEY, conv.getTargetAppKey());
+                        Log.d("ConversationList", "Target app key from conversation: " + conv.getTargetAppKey());
+                        intent.putExtra(CApplication.DRAFT, getAdapter().getDraft(conv.getId()));
+                    }
+                    intent.setClass(mContext.getActivity(), ChatActivity.class);
+                    mContext.getActivity().startActivity(intent);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> viewAdapter, View view, final int position, long id) {
+        if (position > 0) {
+            try {
+                final Conversation conv = mDatas.get(position - 2);
+                if (conv != null) {
+                    OnClickListener listener = new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (conv.getType() == ConversationType.group) {
+                                JMessageClient.deleteGroupConversation(((GroupInfo) conv.getTargetInfo())
+                                        .getGroupID());
+                            } else {
+                                //使用带AppKey的接口,可以删除跨/非跨应用的会话(如果不是跨应用,conv拿到的AppKey则是默认的)
+                                JMessageClient.deleteSingleConversation(((UserInfo) conv.getTargetInfo())
+                                        .getUserName(), conv.getTargetAppKey());
+                            }
+                            mDatas.remove(position - 2);
+                            mListAdapter.notifyDataSetChanged();
+                            mDialog.dismiss();
+                        }
+                    };
+                    mDialog = DialogCreator.createDelConversationDialog(mContext.getActivity(), conv.getTitle(),
+                            listener);
+                    mDialog.show();
+                    mDialog.getWindow().setLayout((int) (0.8 * mWidth), WindowManager.LayoutParams.WRAP_CONTENT);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    public ConversationListAdapter getAdapter() {
+        return mListAdapter;
+    }
+
+}

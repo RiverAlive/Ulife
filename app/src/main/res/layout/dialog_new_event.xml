@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><!--首页心活动或公告-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_taste"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/login_taste">
+
+        <ImageView
+            android:id="@+id/img_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@mipmap/shiyu_zhanweitu"
+            android:scaleType="fitXY"/>
+        <ImageView
+            android:id="@+id/img_canal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:padding="10dp"
+            android:src="@mipmap/img_event_cancl"/>
+    </RelativeLayout>
+</LinearLayout>

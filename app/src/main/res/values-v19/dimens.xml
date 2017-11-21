@@ -1,0 +1,5 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="statusbar_view_height">25dp</dimen>
+    <dimen name="title_bar_height">48dp</dimen>
+</resources>

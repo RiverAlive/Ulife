@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/customer_item_left"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <View
+            android:id="@+id/view_line"
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:background="@color/login_mian"
+            android:visibility="invisible"/>
+        <TextView
+            android:id="@+id/txt_classname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:paddingBottom="10dp"
+            android:textSize="@dimen/four_font_size"
+            android:paddingTop="10dp"
+            android:textColor="@color/content_font"
+            android:text="鸭血粉丝汤" />
+
+
+    </LinearLayout>
+</LinearLayout>

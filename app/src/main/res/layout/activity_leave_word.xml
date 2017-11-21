@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+    <include
+        layout="@layout/app_title"/>
+    <EditText
+        android:id="@+id/edt_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/bg_my_stroke"
+        android:hint="请输入评论"
+        android:textColorHint="@color/bg_tab_line"
+        android:textColor="@color/main_font"
+        android:lineSpacingExtra="5dp"
+        android:gravity="left|top"
+        android:padding="5dp"
+        android:textSize="@dimen/third_font_size"
+        android:minLines="10"/>
+</LinearLayout>

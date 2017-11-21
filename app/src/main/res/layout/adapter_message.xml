@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="5dp"
+    android:background="@drawable/bg_my_stroke">
+    <ImageView
+        android:id="@+id/img_head"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/zhanweitu"/>
+    <TextView
+        android:id="@+id/txt_remark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="分类"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
+        android:textColor="@color/main_font"
+        android:textSize="@dimen/forth_font_size"/>
+</LinearLayout>
